@@ -2,8 +2,11 @@ const express=require('express');
 const app=express();
 const port = 5000;
 const mongoose=require("mongoose");
-const mongourl = require("./keys")
+const mongourl = require("./keys");
+const cors = require("cors");
 
+
+app.use(cors())
 require('./models/model')
 app.use(express.json())
 app.use(require("./routes/auth"))
