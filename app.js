@@ -1,27 +1,29 @@
-const express=require('express');
-const app=express();
+const express = require('express');
+const app = express();
 const port = 5000;
-const mongoose=require("mongoose");
-const {mongourl} = require("./keys");
+const mongoose = require("mongoose");
+const { mongourl } = require("./keys");
 const cors = require("cors");
 
 
 app.use(cors())
 require('./models/model')
+require('./models/post')
 app.use(express.json())
 app.use(require("./routes/auth"))
+app.use(require("./routes/createPost"))
 mongoose.connect(mongourl)
 
-mongoose.connection.on("connected",()=>{
+mongoose.connection.on("connected", () => {
     console.log("successfully connected to mongoose")
 })
 
-mongoose.connection.on("error",()=>{
+mongoose.connection.on("error", () => {
     console.log("not connected to mongoose")
 })
 
-app.listen(port,()=>{
-    console.log("Server is running on port "+port)
+app.listen(port, () => {
+    console.log("Server is running on port " + port)
 })
 
 

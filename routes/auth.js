@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const USER = mongoose.model("USER");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
-const {Jwt_secret} = require("../keys");
+const { Jwt_secret } = require("../keys");
 const requireLogin = require("../middlewares/requireLogin");
 
 
@@ -12,10 +12,7 @@ router.get('/', (req, res) => {
     res.send("hello")
 })
 
-router.get("/createPost",requireLogin,(req,res)=>{
-    console.log("Hello auth")
 
-})
 
 router.post("/signup", (req, res) => {
     const { name, username, email, password } = req.body;
@@ -58,7 +55,7 @@ router.post("/signin", (req, res) => {
         bcrypt.compare(password, savedUser.password).then((match) => {
             if (match) {
                 // return res.status(200).json({ message: "Signed in Successfully" })
-                const token=jwt.sign({_id:savedUser._id},Jwt_secret)
+                const token = jwt.sign({ _id: savedUser._id }, Jwt_secret)
                 res.json(token)
                 console.log(token)
             } else {
