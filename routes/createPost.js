@@ -6,8 +6,9 @@ const POST = mongoose.model("POST")
 
 router.get("/allposts", requireLogin, (req, res) => {
     POST.find()
-        .populate("postedBy", "_id name")
+        .populate("postedBy", "_id name Photo")
         .populate("comments.postedBy","_id name")
+        .sort("-createdAt")
         .then(posts => res.json(posts))
         .catch(err => console.log(err))
 })
@@ -33,6 +34,7 @@ router.get("/myposts", requireLogin, (req, res) => {
     POST.find({ postedBy: req.user._id })
         .populate("postedBy", "_id name")
         .populate("comments.postedBy","_id name")
+        .sort("-createdAt")
         .then(myposts => {
             res.json(myposts)
         })
@@ -44,7 +46,7 @@ router.put("/like", requireLogin, async (req, res) => {
             req.body.postId,
             { $push: { likes: req.user._id } },
             { new: true }
-        ).populate("postedBy", "_id name")
+        ).populate("postedBy", "_id name Photo")
         res.json(result);
     } catch (err) {
         res.status(422).json({ error: err });
@@ -57,7 +59,7 @@ router.put("/unlike", requireLogin, async (req, res) => {
             req.body.postId,
             { $pull: { likes: req.user._id } },
             { new: true }
-        ).populate("postedBy", "_id name")
+        ).populate("postedBy", "_id name Photo")
         res.json(result);
     } catch (err) {
         res.status(422).json({ error: err });
@@ -76,7 +78,7 @@ router.put("/comment", requireLogin, async (req, res) => {
             { $push: { comments: comment } },
             { new: true }
         )
-        .populate("comments.postedBy", "_id name")
+        .populate("comments.postedBy", "_id name Photo")
         .populate("postedBy","_id name")
 
         res.json(result);

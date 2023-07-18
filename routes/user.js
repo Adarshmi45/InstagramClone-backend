@@ -22,43 +22,57 @@ router.get("/user/:id", async (req, res) => {
 
 router.put('/follow', requireLogin, async (req, res) => {
     try {
-      const updatedUser = await USER.findByIdAndUpdate(
-        req.body.followId,
-        { $push: { followers: req.user._id } },
-        { new: true }
-      ).exec();
-  
-      await USER.findByIdAndUpdate(
-        req.user._id,
-        { $push: { following: req.body.followId } },
-        { new: true }
-      ).exec();
-  
-      res.json(updatedUser);
-    } catch (err) {
-      res.status(422).json({ error: err });
-    }
-  });
+        const updatedUser = await USER.findByIdAndUpdate(
+            req.body.followId,
+            { $push: { followers: req.user._id } },
+            { new: true }
+        ).exec();
 
-  router.put('/unfollow', requireLogin, async (req, res) => {
-    try {
-      const updatedUser = await USER.findByIdAndUpdate(
-        req.body.followId,
-        { $pull: { followers: req.user._id } },
-        { new: true }
-      ).exec();
-  
-      await USER.findByIdAndUpdate(
-        req.user._id,
-        { $pull: { following: req.body.followId } },
-        { new: true }
-      ).exec();
-  
-      res.json(updatedUser);
+        await USER.findByIdAndUpdate(
+            req.user._id,
+            { $push: { following: req.body.followId } },
+            { new: true }
+        ).exec();
+
+        res.json(updatedUser);
     } catch (err) {
-      res.status(422).json({ error: err });
+        res.status(422).json({ error: err });
     }
-  });
+});
+
+router.put('/unfollow', requireLogin, async (req, res) => {
+    try {
+        const updatedUser = await USER.findByIdAndUpdate(
+            req.body.followId,
+            { $pull: { followers: req.user._id } },
+            { new: true }
+        ).exec();
+
+        await USER.findByIdAndUpdate(
+            req.user._id,
+            { $pull: { following: req.body.followId } },
+            { new: true }
+        ).exec();
+
+        res.json(updatedUser);
+    } catch (err) {
+        res.status(422).json({ error: err });
+    }
+});
+
+router.put("/uploadProfilePic", requireLogin, async (req, res) => {
+    try {
+        const result = await USER.findByIdAndUpdate(
+            req.user._id,
+            { $set: { Photo: req.body.pic } },
+            { new: true }
+        );
+        res.json(result);
+    } catch (err) {
+        res.status(422).json({ error: err });
+    }
+});
+
 
 
 
