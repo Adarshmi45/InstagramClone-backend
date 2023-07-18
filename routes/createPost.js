@@ -7,6 +7,7 @@ const POST = mongoose.model("POST")
 router.get("/allposts", requireLogin, (req, res) => {
     POST.find()
         .populate("postedBy", "_id name")
+        .populate("comments.postedBy","_id name")
         .then(posts => res.json(posts))
         .catch(err => console.log(err))
 })
@@ -61,5 +62,28 @@ router.put("/unlike", requireLogin, async (req, res) => {
         res.status(422).json({ error: err });
     }
 });
+
+router.put("/comment", requireLogin, async (req, res) => {
+    const comment = {
+        comment: req.body.text,
+        postedBy: req.user._id
+    };
+
+    try {
+        const result = await POST.findByIdAndUpdate(
+            req.body.postId,
+            { $push: { comments: comment } },
+            { new: true }
+        )
+        .populate("comments.postedBy", "_id name")
+        .populate("postedBy","_id name")
+
+        res.json(result);
+    } catch (err) {
+        res.status(422).json({ error: err });
+    }
+});
+
+
 
 module.exports = router
