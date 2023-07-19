@@ -1,9 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const POST = mongoose.model("POST");
-const USER = mongoose.model("USER");
+const USER = mongoose.model("USER")
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+const { Jwt_secret } = require("../keys");
 const requireLogin = require("../middlewares/requireLogin");
+
+
+
+router.get('/user', requireLogin, (req, res) => {
+    USER.findById(req.user._id)
+      .select('-password')
+      .then((user) => {
+        res.json(user);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+      });
+});
 
 
 router.get("/user/:id", async (req, res) => {
